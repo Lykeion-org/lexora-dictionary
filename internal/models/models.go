@@ -13,7 +13,7 @@ type Referent struct {
 	UpdatedAt 			time.Time
 
 	//Many-to-many relations
-	Symbols     		[]Symbol 					`gorm:"many2many:referent_symbols"`
+	Symbols     		[]Symbol 					`gorm:"many2many:referent_symbols;joinForeignKey:ReferentID;joinReferences:SymbolID"`
 }
 
 type Symbol struct {
@@ -22,7 +22,7 @@ type Symbol struct {
 	SymbolType 			int       					`gorm:"not null"`
 	LemmaUID   			*uuid.UUID
 	Lemma      			*Word  						`gorm:"foreignKey:LemmaUID"`
-	Words      			[]Word 						`gorm:"many2many:symbol_words"`
+	Words      			[]Word 						`gorm:"many2many:symbol_words;joinForeignKey:SymbolID;joinReferences:WordID"`
 	CreatedAt   		time.Time
 	UpdatedAt 			time.Time
 }
