@@ -136,6 +136,10 @@ func (s *LanguageServer) CreateReferent(ctx context.Context, req *lexora.CreateR
 }
 
 func (s *LanguageServer) CreateSymbol(ctx context.Context, req *lexora.CreateSymbolRequest) (*shared.Symbol, error) {
+	referentUID, err := parseOptionalUID(req.GetReferentUid())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid referent UID: %v", err)
+	}
 
 	var sym *db.Symbol = &db.Symbol{
 		UID: uuid.New(),
@@ -147,10 +151,20 @@ func (s *LanguageServer) CreateSymbol(ctx context.Context, req *lexora.CreateSym
 		return nil, status.Errorf(codes.Internal, "db: error: %v", err)
 	}
 
+	if referentUID != uuid.Nil {
+		if err := s.RelationshipRepository.AddSymbolToReferent(ctx, referentUID, createdSym.UID); err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to link symbol to referent: %v", err)
+		}
+	}
+
 	return convertSymbolToProto(createdSym), nil
 }
 
 func (s *LanguageServer) CreateWord(ctx context.Context, req *lexora.CreateWordRequest) (*shared.Word, error) {
+	symbolUID, err := parseOptionalUID(req.GetSymbolUid())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid symbol UID: %v", err)
+	}
 
 	var wrd *db.Word = &db.Word{
 		UID: uuid.New(),
@@ -162,6 +176,12 @@ func (s *LanguageServer) CreateWord(ctx context.Context, req *lexora.CreateWordR
 	
 	createdWrd, err := s.WordRepository.CreateWord(ctx, wrd); if err != nil {
 		return nil, status.Errorf(codes.Internal, "db: error: %v", err)
+	}
+
+	if symbolUID != uuid.Nil {
+		if err := s.RelationshipRepository.AddWordToSymbol(ctx, symbolUID, createdWrd.UID); err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to link word to symbol: %v", err)
+		}
 	}
 
 	return convertWordToProto(createdWrd), nil
@@ -391,4 +411,12 @@ func (s *LanguageServer) SetSymbolLemma(ctx context.Context, req *lexora.SetSymb
 	}
 
 	return &lexora.SetSymbolLemmaResponse{Succes: true}, nil
+}
+
+// parseOptionalUID returns uuid.Nil for an empty string and an error for a malformed one.
+func parseOptionalUID(uid string) (uuid.UUID, error) {
+	if uid == "" {
+		return uuid.Nil, nil
+	}
+	return uuid.Parse(uid)
 }

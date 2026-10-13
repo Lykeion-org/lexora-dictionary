@@ -1,5 +1,5 @@
-github.com/Lykeion-org/lexora-dictionary-service v0.0.0-20250627064555-7054ed1c0c23 h1:sKd/00ZVIu7STqabYPGduuqhXQ1en6V0OyQ2TyqGZ08=
-github.com/Lykeion-org/lexora-dictionary-service v0.0.0-20250627064555-7054ed1c0c23/go.mod h1:6UTXVHRQmiOWTk+gj8nETHoppx/awHb4tJhctThvWNA=
+github.com/Lykeion-org/go-shared v0.0.0-20250705211659-99fb7d06aa32 h1:G4QXpB64GGjAq0whsofUOwQiwiviJGqlpntr98fB7ao=
+github.com/Lykeion-org/go-shared v0.0.0-20250705211659-99fb7d06aa32/go.mod h1:Z6ebAQIt61vK5EhqOU/npPMFDHaiqi9EiYSq++my/4g=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

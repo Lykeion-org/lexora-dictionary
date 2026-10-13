@@ -62,7 +62,7 @@ func (s *referentRepository) ListReferentByWord(ctx context.Context, word string
 	// First find matching words
 	var words []models.Word
 	if err := s.db.WithContext(ctx).
-		Where("word LIKE ?", "%"+word+"%").
+		Where("word ILIKE ?", "%"+word+"%").
 		Find(&words).Error; err != nil {
 		return nil, err
 	}
@@ -72,15 +72,18 @@ func (s *referentRepository) ListReferentByWord(ctx context.Context, word string
 	for _, w := range words {
 		wordIDs = append(wordIDs, w.UID)
 	}
+	if len(wordIDs) == 0 {
+		return referents, nil
+	}
 
 	// Find referents through symbol-word relationships
 	err := s.db.WithContext(ctx).
+		Preload("Symbols.Lemma").
 		Preload("Symbols.Words").
-		Joins("JOIN referent_symbols ON referents.uid = referent_symbols.referent_uid").
-		Joins("JOIN symbols ON referent_symbols.symbol_uid = symbols.uid").
-		Joins("JOIN symbol_words ON symbols.uid = symbol_words.symbol_uid").
-		Where("symbol_words.word_uid IN ?", wordIDs).
-		Distinct("referents.uid").
+		Where(`referents.uid IN (
+			SELECT referent_symbols.referent_id FROM referent_symbols
+			JOIN symbol_words ON symbol_words.symbol_id = referent_symbols.symbol_id
+			WHERE symbol_words.word_id IN ?)`, wordIDs).
 		Find(&referents).Error
 
 	return referents, err
