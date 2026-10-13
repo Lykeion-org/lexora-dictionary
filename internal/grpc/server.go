@@ -21,6 +21,7 @@ type LanguageServer struct {
 	SymbolRepository   			repository.SymbolRepository
 	WordRepository     			repository.WordRepository
 	RelationshipRepository      repository.RelationshipRepository
+	SuggestionRepository		repository.SuggestionRepository
 	server						*grpc.Server
 }
 
@@ -30,6 +31,7 @@ func NewLanguageServer(db *gorm.DB) *LanguageServer{
 		SymbolRepository: repository.NewSymbolRepository(db),
 		WordRepository:      repository.NewWordRepository(db),
 		RelationshipRepository: repository.NewRelationshipRepository(db),
+		SuggestionRepository: repository.NewSuggestionRepository(db),
 	}
 }
 
