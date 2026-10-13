@@ -76,9 +76,14 @@ type WordAttributes struct {
 type WordSuggestion struct {
 	UID         		uuid.UUID 					`gorm:"type:uuid;primaryKey"`
 	Word        		string    					`gorm:"not null"`
+	Lemma				string
+	Language			int							`gorm:"index"`
+	SymbolType			int
 	SoundSource 		string
 	IPA         		string
 	WordType    		int
+	JobUID				string
+	RequesterUID		string
 	Approved			bool						`gorm:"default:false"`
 	ApprovedBy			string
 	CreatedAt   		time.Time
